@@ -86,35 +86,24 @@ footer strong{color:var(--gd)}
 
 <div class="ov" id="lg">
 <form id="lif">
-<h2>Log in to PassItOn</h2>
-<p class="sub" style="margin:0">Log in with your email and password. An account is needed to use the app.</p>
-<div><label for="lie">Email</label><input id="lie" type="email" required autocomplete="email"></div>
-<div><label for="lip">Password</label><input id="lip" type="password" required autocomplete="current-password"></div>
+<h2>Welcome to PassItOn</h2>
+<p class="sub" style="margin:0">Tell us a little about you. Other students will see your college and district on your listings and requests.</p>
+<div><label for="ln">Your name</label><input id="ln" required maxlength="30" autocomplete="name"></div>
+<div><label for="lc">College name</label><input id="lc" required maxlength="70" placeholder="e.g. Government College of Engineering"><div class="meta">Must end with Engineering College, Institute of Technology or University.</div></div>
+<div><label for="ldt">District</label><select id="ldt" required></select></div>
+<div><label for="lr">I want to</label><select id="lr"><option>Sell materials</option><option>Buy materials</option></select></div>
 <div class="msg" id="lim" role="status" style="color:var(--warn)"></div>
-<button class="btn" type="submit">Log in</button>
-<button class="btn sm alt" type="button" id="gosu">Create an account</button>
+<button class="btn" type="submit">Continue</button>
 <button class="btn sm alt" type="button" id="ownt">I am the owner of this app</button>
 </form>
-<form id="lgf" hidden>
-<h2>Create your account</h2>
-<p class="sub" style="margin:0">Other students will see your college and district on your listings and requests.</p>
-<div><label for="ln">Your name</label><input id="ln" required maxlength="30" autocomplete="name"></div>
-<div><label for="le">Email</label><input id="le" type="email" required autocomplete="email"></div>
-<div><label for="lp">Password (at least 8 characters)</label><input id="lp" type="password" required minlength="8" autocomplete="new-password"></div>
-<div><label for="lr">I am here to</label><select id="lr"><option>Give or sell materials</option><option>Buy materials</option></select></div>
-<div><label for="lc">College</label><input id="lc" required maxlength="70" placeholder="e.g. Government College of Engineering"><div class="meta">Must end with Engineering College, Institute of Technology or University.</div></div>
-<div><label for="ldt">District</label><select id="ldt" required></select></div>
-<div class="msg" id="lgm" role="status" style="color:var(--warn)"></div>
-<button class="btn" type="submit">Create account</button>
-<button class="btn sm alt" type="button" id="gosi">I already have an account</button>
-
+<form id="ownf" hidden>
 <h2>Owner login</h2>
 <p class="sub" style="margin:0">Only the app owner can open the owner dashboard.</p>
 <div><label for="ou">Username</label><input id="ou" required autocomplete="username"></div>
 <div><label for="op">Password</label><input id="op" type="password" required autocomplete="current-password"></div>
 <div class="msg" id="om" role="status" style="color:var(--warn)"></div>
 <button class="btn" type="submit">Log in as owner</button>
-<button class="btn sm alt" type="button" id="ownb">Back to student login</button>
+<button class="btn sm alt" type="button" id="ownb">Back</button>
 </form></div>
 <main id="top">
 <div class="wrap">
@@ -211,11 +200,9 @@ function fee(c,cd,p){var f=FEE[c];if(typeof f==="object")return f[cd]||10;if(typ
 function tot(i){return i.p+fee(i.c,i.cd,i.p)}
 var user=null,owner=false,logins=[];
 var OWNER_HASH="610567ab48c36a77fe67829f959d31339d3dd7662dbfd01f8c3e90b5df66c5fc";
-var accts={};try{accts=JSON.parse(localStorage.getItem("pi_accts"))||{}}catch(x){accts={}}
-function saveAccts(){try{localStorage.setItem("pi_accts",JSON.stringify(accts))}catch(x){}}
 var COLLEGE_RE=/^.{3,}\s(engineering college|institute of technology|university)$/i;
 function cleanC(t){return t.trim().replace(/\s+/g," ")}
-function showForm(id){["lif","lgf","ownf"].forEach(function(f){$(f).hidden=f!==id})}
+function showForm(id){["lif","ownf"].forEach(function(f){$(f).hidden=f!==id})}
 var orders=[],msgs=[];
 function wa(ph,name,text){msgs.unshift({t:new Date().toLocaleString(),to:name+" ("+ph+")",x:text})}
 function toast(m){var t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(function(){t.hidden=true},3800)}
@@ -240,7 +227,6 @@ function renderDeals(){
   $("dlist").innerHTML=h}
 function uid(u){return(u.n+"|"+u.col+"|"+u.dt).toLowerCase()}
 function canManage(i){return owner||(user&&i.oid===user.id)}
-function norm(t){return t.trim().replace(/\s+/g," ").toLowerCase().replace(/(^|\s)\S/g,function(m){return m.toUpperCase()})}
 function showUser(){$("lg").hidden=!!user;$("out").hidden=!user;$("who").textContent=owner?"Owner · parmita":user?user.n+" · "+user.col+", "+user.dt:"";$("owner").hidden=!owner;$("ownav").hidden=!owner;if(owner)renderOwner();
   var b=isB(),sl=isS();
   $("browse").hidden=!(b||owner);$("list").hidden=!(sl||owner);$("deals").hidden=!(b||sl);$("dealnav").hidden=!(b||sl);
@@ -258,7 +244,7 @@ function renderOwner(){
   $("otr").innerHTML=tbl(["Request","Posted by","College, district","Responses","Requester WhatsApp"],reqs.map(function(r){return[r.t,r.n,r.col+", "+r.dt,r.r,r.ph||"—"]}));
   $("oto").innerHTML=tbl(["Item","Buyer","Buyer WhatsApp","Seller","Seller WhatsApp","Buyer pays","PassItOn fee","Status"],orders.map(function(o){return[o.iname,o.bn+" ("+o.bcol+")",o.bph,o.sn+" ("+o.col+")",o.sph,"₹"+o.amt,"₹"+o.fee,STL[o.st]]}));
   $("otm").innerHTML=tbl(["Time","To","Message"],msgs.map(function(m){return[m.t,m.to,m.x]}));
-  $("otg").innerHTML=tbl(["Name","Email","Role","College","District","Time"],logins.map(function(l){return[l.n,l.email||"-",l.role,l.col,l.dt,l.t]}));
+  $("otg").innerHTML=tbl(["Name","Role","College","District","Time"],logins.map(function(l){return[l.n,l.role,l.col,l.dt,l.t]}));
 }
 function esc(s){return String(s).replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]})}
 function $(i){return document.getElementById(i)}
@@ -372,34 +358,21 @@ $("rf").addEventListener("submit",function(e){
   if(!/^\+?\d{10,13}$/.test(ph)){toast("Enter a valid 10-digit WhatsApp number.");return}
   reqs.unshift({id:nextId++,t:$("rt").value.trim(),n:user.n,col:user.col,dt:user.dt,d:$("rd").value,ph:ph,r:0});
   e.target.reset();$("rm").textContent="Request posted. Sellers will reach you on WhatsApp.";renderReqs();setTimeout(function(){$("rm").textContent=""},4000)});
-function startSession(email){
-  var a=accts[email];
-  user={n:a.n,role:a.role,col:a.col,dt:a.dt,email:email,id:email};
-  logins.unshift({n:user.n,email:email,role:user.role,col:user.col,dt:user.dt,t:new Date().toLocaleString()});
-  try{localStorage.setItem("pi_user",JSON.stringify(user))}catch(x){}
-  $("lif").reset();$("lgf").reset();$("lim").textContent="";$("lgm").textContent="";showForm("lif");showUser();renderItems();window.scrollTo(0,0)}
-function secureOk(m){if(window.crypto&&crypto.subtle)return true;m.textContent="Login needs a secure (https) page.";return false}
+
 $("lc").addEventListener("input",function(){$("lc").setCustomValidity(COLLEGE_RE.test(cleanC($("lc").value))?"":"College name must end with Engineering College, Institute of Technology or University.")});
-$("gosu").addEventListener("click",function(){showForm("lgf")});
-$("gosi").addEventListener("click",function(){showForm("lif")});
-$("lgf").addEventListener("submit",function(e){
-  e.preventDefault();
-  var col=cleanC($("lc").value),email=$("le").value.trim().toLowerCase();
-  if(!COLLEGE_RE.test(col)){$("lgm").textContent="College name must end with Engineering College, Institute of Technology or University.";return}
-  if(!$("ldt").value){$("lgm").textContent="Pick a district from the list.";return}
-  if(accts[email]){$("lgm").textContent="An account with this email already exists. Log in instead.";return}
-  if(!secureOk($("lgm")))return;
-  var salt=Array.from(crypto.getRandomValues(new Uint8Array(8))).map(function(x){return x.toString(16).padStart(2,"0")}).join("");
-  sha(salt+":"+$("lp").value).then(function(h){
-    accts[email]={salt:salt,hash:h,n:$("ln").value.trim(),role:$("lr").value,col:col,dt:$("ldt").value};
-    saveAccts();startSession(email)})});
 $("lif").addEventListener("submit",function(e){
   e.preventDefault();
-  var email=$("lie").value.trim().toLowerCase(),a=accts[email];
-  if(!secureOk($("lim")))return;
-  if(!a){$("lim").textContent="Email or password is incorrect.";return}
-  sha(a.salt+":"+$("lip").value).then(function(h){
-    if(h===a.hash)startSession(email);else $("lim").textContent="Email or password is incorrect."})});
+  var col=cleanC($("lc").value),nm=cleanC($("ln").value);
+  if(!nm){$("lim").textContent="Enter your name.";return}
+  if(!COLLEGE_RE.test(col)){$("lim").textContent="College name must end with Engineering College, Institute of Technology or University.";return}
+  if(!$("ldt").value){$("lim").textContent="Pick a district from the list.";return}
+  var u={n:nm,col:col,dt:$("ldt").value,role:$("lr").value};
+  u.id=uid(u);
+  user=u;owner=false;
+  logins.unshift({n:u.n,role:u.role,col:u.col,dt:u.dt,t:new Date().toLocaleString()});
+  try{localStorage.setItem("pi_user",JSON.stringify(u))}catch(x){}
+  $("lif").reset();$("lim").textContent="";
+  showUser();renderItems();renderReqs();window.scrollTo(0,0)});
 $("plus").addEventListener("click",function(){setTimeout(function(){$("n").focus()},500)});
 $("ownt").addEventListener("click",function(){showForm("ownf")});
 $("ownb").addEventListener("click",function(){showForm("lif");$("om").textContent=""});
@@ -411,9 +384,9 @@ $("ownf").addEventListener("submit",function(e){
     else $("om").textContent="Username or password is incorrect."})});
 $("out").addEventListener("click",function(){
   owner=false;user=null;try{localStorage.removeItem("pi_user")}catch(x){}
-  showUser();renderItems()});
+  showForm("lif");showUser();renderItems()});
 try{user=JSON.parse(localStorage.getItem("pi_user"))}catch(x){user=null}
-if(!user||!user.n||!user.col||!user.dt||!user.email||!accts[user.email])user=null;
+if(!user||!user.n||!user.col||!user.dt||!user.role||!user.id||user.id==="owner")user=null;
 showUser();renderItems();renderReqs();
 </script>
 </body>
