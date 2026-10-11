@@ -57,4 +57,338 @@ form{background:var(--card);border:1px solid var(--line);border-radius:20px;padd
 form .full{grid-column:1/-1}
 .msg{color:var(--gd);font-weight:600;min-height:1.4em}
 .reqs{display:grid;gap:12px}
-.req{background:var(--card);border:1px solid
+.req{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+.req p{margin:0 0 6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+footer{background:var(--gl);margin-top:30px;padding:28px 0;color:var(--mute);font-size:15px}
+footer strong{color:var(--gd)}
+.safe{margin-top:10px;color:var(--warn);font-weight:600}
+#who{font-size:13px;color:var(--mute)}
+.ov{position:fixed;inset:0;background:rgba(15,26,19,.65);display:flex;z-index:20;padding:18px;overflow:auto}
+.ov[hidden],.ov form[hidden]{display:none}
+.tw{overflow-x:auto;margin:8px 0 22px}.tw table{border-collapse:collapse;width:100%;font-size:14px;min-width:620px}.tw th,.tw td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}.tw th{background:var(--gl)}
+#owner h3{margin-top:18px}
+[hidden]{display:none!important}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;z-index:30;max-width:90vw;font-size:14px}
+.deal{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:12px}.deal p{margin:0 0 4px}
+#dlist h3{font-size:19px;margin:18px 0 10px}
+.bh{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}.bh h2{margin:0}
+.plus{width:46px;height:46px;border-radius:50%;background:var(--g);color:#fff;font:400 30px/44px Georgia,serif;text-align:center;text-decoration:none;flex:none}.plus:hover{background:var(--gd)}
+.ov form{width:min(420px,100%);grid-template-columns:1fr;margin:auto}
+.ov h2{font-size:26px;color:var(--gd)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="#top">PassItOn</a>
+<nav><a href="#browse" id="nb">Browse</a><a href="#list" id="nl">List an item</a><a href="#requests">Requests</a><a href="#deals" id="dealnav" hidden>My deals</a><a href="#owner" id="ownav" hidden>Owner</a></nav><div><span id="who"></span> <button class="btn sm alt" id="out" type="button" hidden>Log out</button></div></div></header>
+
+<div class="ov" id="lg">
+<form id="lif">
+<h2>Welcome to PassItOn</h2>
+<p class="sub" style="margin:0">Tell us a little about you. Other students will see your college and district on your listings and requests.</p>
+<div><label for="ln">Your name</label><input id="ln" required maxlength="30" autocomplete="name"></div>
+<div><label for="lc">College name</label><input id="lc" required maxlength="70" placeholder="Your college name"></div>
+<div><label for="ldt">District</label><select id="ldt" required></select></div>
+<div><label for="lr">I want to</label><select id="lr"><option>Sell materials</option><option>Buy materials</option></select></div>
+<div class="msg" id="lim" role="status" style="color:var(--warn)"></div>
+<button class="btn" type="submit">Continue</button>
+<button class="btn sm alt" type="button" id="ownt">I am the owner of this app</button>
+</form>
+<form id="ownf" hidden>
+<h2>Owner login</h2>
+<p class="sub" style="margin:0">Only the app owner can open the owner dashboard.</p>
+<div><label for="ou">Username</label><input id="ou" required autocomplete="username"></div>
+<div><label for="op">Password</label><input id="op" type="password" required autocomplete="current-password"></div>
+<div class="msg" id="om" role="status" style="color:var(--warn)"></div>
+<button class="btn" type="submit">Log in as owner</button>
+<button class="btn sm alt" type="button" id="ownb">Back</button>
+</form></div>
+<main id="top">
+<div class="wrap">
+<div class="hero">
+<h1>Your old books, a junior's head start</h1>
+<p>Seniors pass on first-year textbooks, notes, lab coats and tools. Juniors get what they need for little or nothing.</p>
+<div class="btns"><a class="btn" id="hb1" href="#list">I want to give/sell</a><a class="btn alt" id="hb2" href="#browse">I need materials</a></div>
+</div>
+<div class="steps">
+<div class="step"><b>1</b><h3>Seniors list</h3><p>Add what you no longer need, with a price or mark it free.</p></div>
+<div class="step"><b>2</b><h3>Juniors browse</h3><p>Search by category, department and budget, or post a request.</p></div>
+<div class="step"><b>3</b><h3>Meet and pass on</h3><p>Contact each other and hand over the item on campus.</p></div>
+</div>
+</div>
+
+<section id="browse"><div class="wrap">
+<div class="bh"><h2>Browse items</h2><a class="plus" href="#list" id="plus" aria-label="Add an item" title="Add an item">+</a></div><p class="sub">Find materials from students one or two years ahead of you. A small PassItOn fee (₹5 to ₹15) is added to some items, and it is shown on each card.</p>
+<div class="filters">
+<input id="q" type="search" placeholder="Search items…" aria-label="Search items">
+<select id="fc" aria-label="Category"></select>
+<select id="fd" aria-label="Department"></select>
+<select id="fdist" aria-label="District"></select>
+<select id="fp" aria-label="Price"><option value="all">Any price</option><option value="free">Free</option><option value="200">Under ₹200</option><option value="500">Under ₹500</option></select>
+</div>
+<div id="items" class="grid"></div>
+</div></section>
+
+<section id="list"><div class="wrap">
+<h2>List an item</h2><p class="sub">It appears in Browse items as soon as you save it.</p>
+<form id="lf">
+<div><label for="n">Item name</label><input id="n" required maxlength="60" placeholder="e.g. Engineering Mathematics I"></div>
+<div><label for="c">Category</label><select id="c"></select></div>
+<div id="ow" hidden><label for="oc">What are you selling?</label><input id="oc" maxlength="40" placeholder="e.g. Soldering kit"></div>
+<div><label for="d">Department</label><select id="d"></select></div>
+<div id="odw" hidden><label for="od">Your department</label><input id="od" maxlength="40" placeholder="e.g. Aerospace"></div>
+<div><label for="cd">Condition</label><select id="cd"><option>Like new</option><option>Good</option><option>Used</option></select></div>
+<div><label for="p">Price in ₹ (0 for free)</label><input id="p" type="number" min="0" max="5000" value="0" required></div>
+<div><label for="y">Your year</label><select id="y"><option>2nd year</option><option>3rd year</option><option>4th year</option></select></div>
+<div><label for="cm">Contact method</label><select id="cm"><option>WhatsApp</option><option>Phone</option></select></div>
+<div><label for="ct">Phone / WhatsApp number</label><input id="ct" required maxlength="15" inputmode="tel" placeholder="10-digit number"></div>
+<div class="full"><label for="ph">Photo of the item (required)</label><input id="ph" type="file" accept="image/*" required><img id="pp" alt="Photo preview" hidden style="max-height:120px;border-radius:12px;margin-top:8px"></div>
+<div class="full"><label for="ds">Description</label><textarea id="ds" rows="3" maxlength="200" placeholder="Edition, what's included, any marks…"></textarea></div>
+<div class="full meta" id="pv" aria-live="polite" style="background:var(--gl);border-radius:12px;padding:10px 12px"></div>
+<div class="full"><button class="btn" type="submit">Save listing</button> <span class="msg" id="lm" role="status"></span></div>
+</form>
+</div></section>
+
+<section id="requests"><div class="wrap">
+<h2>Requests board</h2><p class="sub">Juniors post what they need. Only sellers and the owner can see the posts, and replies go to the junior on WhatsApp.</p>
+<div class="two">
+<div id="reqs" class="reqs"></div>
+<form id="rf" style="grid-template-columns:1fr">
+<div><label for="rt">What do you need?</label><input id="rt" required maxlength="90" placeholder="e.g. Need Engineering Physics notes, Sem 1"></div>
+<div><label for="rd">Department</label><select id="rd"></select></div>
+<div><label for="rp">Your WhatsApp number (kept private)</label><input id="rp" required maxlength="15" inputmode="tel"></div>
+<div><button class="btn" type="submit">Post request</button> <span class="msg" id="rm" role="status"></span></div>
+</form>
+</div>
+</div></section>
+</main>
+
+<section id="deals" hidden><div class="wrap">
+<div class="bh"><h2 id="dh">My deals</h2><a class="plus" href="#list" id="plus2" aria-label="Add an item" title="Add an item">+</a></div>
+<p class="sub" id="dsub"></p>
+<div id="dlist"></div>
+</div></section>
+
+<section id="owner" hidden><div class="wrap">
+<h2>Owner dashboard</h2><p class="sub">Visible only after owner login. It shows everything sellers and buyers have done in this browser session.</p>
+<div id="ostats" class="steps"></div>
+<h3>Listings</h3><div class="tw" id="otl"></div>
+<h3>Requests</h3><div class="tw" id="otr"></div>
+<h3>Buy orders</h3><div class="tw" id="oto"></div>
+<h3>WhatsApp messages (simulated)</h3><div class="tw" id="otm"></div>
+<h3>Logins</h3><div class="tw" id="otg"></div>
+</div></section>
+
+<footer><div class="wrap">
+<p><strong>About PassItOn.</strong> A student-run idea to keep useful study materials in use and make the first year cheaper. Listings are shared directly between students; nothing is processed here.</p>
+<p class="safe">Safety tip: meet in public campus areas, and check the item before you pay.</p>
+</div></footer>
+
+<div id="toast" role="status" hidden></div>
+<script>
+var CATS=["Textbook","Notes","Record / printed notes","Lab coat","Calculator","Drawing tools","Other"];
+var DEPTS=["CSE","ECE","EEE","Mechanical","Civil","Biotech","All first-year"];
+var ICON={"Textbook":"📘","Notes":"📝","Record / printed notes":"📓","Lab coat":"🥼","Calculator":"🧮","Drawing tools":"📐","Other":"📦"};
+var nextId=100;
+var items=[];
+var reqs=[];
+
+var FEE={"Calculator":{"Like new":15,"Good":10,"Used":10},"Record / printed notes":5};
+var FEE_IF_PAID=5;
+function fee(c,cd,p){var f=FEE[c];if(typeof f==="object")return f[cd]||10;if(typeof f==="number")return f;return p>0?FEE_IF_PAID:0}
+function tot(i){return i.p+fee(i.c,i.cd,i.p)}
+var user=null,owner=false,logins=[];
+var OWNER_HASH="610567ab48c36a77fe67829f959d31339d3dd7662dbfd01f8c3e90b5df66c5fc";
+function cleanC(t){return t.trim().replace(/\s+/g," ")}
+function showForm(id){["lif","ownf"].forEach(function(f){$(f).hidden=f!==id})}
+var orders=[],msgs=[];
+function wa(ph,name,text){msgs.unshift({t:new Date().toLocaleString(),to:name+" ("+ph+")",x:text})}
+function toast(m){var t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(function(){t.hidden=true},3800)}
+function isB(){return !!user&&!owner&&user.role.indexOf("Buy")===0}
+function isS(){return !!user&&!owner&&!isB()}
+var STL={requested:"Waiting for the seller",accepted:"Accepted, payment pending",declined:"Declined",paid:"Paid, final confirmation pending",confirmed:"Confirmed"};
+function renderDeals(){
+  if(!user||owner)return;
+  var b=isB();
+  $("dh").textContent=b?"My orders":"My listings and buy requests";
+  $("dsub").textContent=b?"The seller's WhatsApp number appears only after you pay and confirm.":"Buyers' requests for your items appear here. Numbers stay hidden, and PassItOn passes messages on WhatsApp.";
+  var mine=orders.filter(function(o){return b?o.bid===user.id:o.sid===user.id});
+  var h=mine.length?mine.map(function(o){
+    var x='<div class="deal"><p><strong>'+esc(o.iname)+'</strong> · ₹'+o.amt+'</p><div class="meta">'+(b?'Seller: '+esc(o.sn)+' · '+esc(o.col)+', '+esc(o.dt):'Buyer: '+esc(o.bn)+' · '+esc(o.bcol)+', '+esc(o.bdt))+' · '+STL[o.st]+'</div>';
+    if(!b&&o.st==="requested")x+='<div class="row"><button class="btn sm" data-a="acc" data-id="'+o.id+'">Accept</button><button class="btn sm alt" data-a="dec" data-id="'+o.id+'">Decline</button></div>';
+    if(b&&o.st==="accepted")x+='<div class="row"><button class="btn sm" data-a="pay" data-id="'+o.id+'">Pay ₹'+o.amt+'</button></div><div class="meta">Demo payment: no real money moves.</div>';
+    if(b&&o.st==="paid")x+='<div class="contact"><strong>Final confirmation</strong><br>Payment received. Confirm to get the seller\'s WhatsApp number.</div><div class="row"><button class="btn sm" data-a="conf" data-id="'+o.id+'">Confirm and get seller contact</button></div>';
+    if(b&&o.st==="confirmed")x+='<div class="contact">Seller WhatsApp: '+esc(o.sph)+'</div>';
+    return x+'</div>'}).join(''):'<div class="empty">'+(b?'No orders yet. Request an item from Browse.':'No buy requests yet.')+'</div>';
+  if(!b){var my=items.filter(function(i){return i.oid===user.id});
+    h+='<h3>Your listings</h3>'+(my.length?my.map(function(i){return'<div class="deal"><p><strong>'+esc(i.n)+'</strong> · '+(tot(i)===0?'Free':'₹'+tot(i))+' · '+(i.done?'Sold / given':'Available')+'</p><div class="row"><button class="btn sm alt" data-a="d" data-id="'+i.id+'">'+(i.done?'Relist':'Mark sold / given')+'</button></div></div>'}).join(''):'<div class="empty">No listings yet. Tap + to add one.</div>')}
+  $("dlist").innerHTML=h}
+function uid(u){return(u.n+"|"+u.col+"|"+u.dt).toLowerCase()}
+function canManage(i){return owner||(user&&i.oid===user.id)}
+function showUser(){$("lg").hidden=!!user;$("out").hidden=!user;$("who").textContent=owner?"Owner · parmita":user?user.n+" · "+user.col+", "+user.dt:"";$("owner").hidden=!owner;$("ownav").hidden=!owner;if(owner)renderOwner();
+  var b=isB(),sl=isS();
+  $("browse").hidden=!(b||owner);$("list").hidden=!(sl||owner);$("deals").hidden=!(b||sl);$("dealnav").hidden=!(b||sl);
+  $("nb").hidden=!(b||owner);$("nl").hidden=!(sl||owner);$("hb1").hidden=b;$("hb2").hidden=sl;
+  $("reqs").hidden=!(sl||owner);$("rf").hidden=sl;$("plus").hidden=!owner;$("plus2").hidden=!sl;
+  renderDeals()}
+function sha(t){return crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")})}
+function tbl(h,rows){return rows.length?'<table><thead><tr>'+h.map(function(x){return'<th>'+x+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return'<tr>'+r.map(function(c){return'<td>'+esc(c)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table>':'<div class="empty">Nothing yet.</div>'}
+function renderOwner(){
+  if(!owner)return;
+  var got=0,all=0;items.forEach(function(i){var f=fee(i.c,i.cd,i.p);all+=f;if(i.done)got+=f});
+  var st=[[items.length,"Listings"],[reqs.length,"Requests"],[logins.length,"Logins this session"],["₹"+got,"Fees from sold / given items"],["₹"+all,"Fees on all current listings"]];
+  $("ostats").innerHTML=st.map(function(x){return'<div class="step"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>'}).join('');
+  $("otl").innerHTML=tbl(["Item","Seller","College, district","Seller price","Fee","Buyer pays","Contact","Status"],items.map(function(i){return[(i.oc||i.c)+": "+i.n,i.sn||"",i.col+", "+i.dt,"₹"+i.p,"₹"+fee(i.c,i.cd,i.p),"₹"+tot(i),i.cm+" "+i.ct,i.done?"Sold / given":"Available"]}));
+  $("otr").innerHTML=tbl(["Request","Posted by","College, district","Responses","Requester WhatsApp"],reqs.map(function(r){return[r.t,r.n,r.col+", "+r.dt,r.r,r.ph||"—"]}));
+  $("oto").innerHTML=tbl(["Item","Buyer","Buyer WhatsApp","Seller","Seller WhatsApp","Buyer pays","PassItOn fee","Status"],orders.map(function(o){return[o.iname,o.bn+" ("+o.bcol+")",o.bph,o.sn+" ("+o.col+")",o.sph,"₹"+o.amt,"₹"+o.fee,STL[o.st]]}));
+  $("otm").innerHTML=tbl(["Time","To","Message"],msgs.map(function(m){return[m.t,m.to,m.x]}));
+  $("otg").innerHTML=tbl(["Name","Role","College","District","Time"],logins.map(function(l){return[l.n,l.role,l.col,l.dt,l.t]}));
+}
+function esc(s){return String(s).replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]})}
+function $(i){return document.getElementById(i)}
+function fill(id,arr,first){$(id).innerHTML=(first?'<option value="all">'+first+'</option>':'')+arr.map(function(a){return'<option>'+esc(a)+'</option>'}).join('')}
+fill("fc",CATS,"All categories");fill("fd",DEPTS,"All departments");
+fill("c",CATS);fill("d",DEPTS.concat(["Other"]));fill("rd",DEPTS);
+var TN=["Ariyalur","Chengalpattu","Chennai","Coimbatore","Cuddalore","Dharmapuri","Dindigul","Erode","Kallakurichi","Kancheepuram","Kanniyakumari","Karur","Krishnagiri","Madurai","Mayiladuthurai","Nagapattinam","Namakkal","Nilgiris","Perambalur","Pudukkottai","Ramanathapuram","Ranipet","Salem","Sivaganga","Tenkasi","Thanjavur","Theni","Thoothukudi","Tiruchirappalli","Tirunelveli","Tirupathur","Tiruppur","Tiruvallur","Tiruvannamalai","Tiruvarur","Vellore","Viluppuram","Virudhunagar"];
+$("ldt").innerHTML='<option value="">Select district</option>'+TN.map(function(d){return'<option>'+d+'</option>'}).join('');
+
+function refreshDist(){
+  var cur=$("fdist").value||"all",ds=[];
+  items.forEach(function(i){if(ds.indexOf(i.dt)<0)ds.push(i.dt)});ds.sort();
+  $("fdist").innerHTML='<option value="all">All districts</option>'+(user?'<option value="mine">My district ('+esc(user.dt)+')</option>':'')+ds.map(function(d){return'<option>'+esc(d)+'</option>'}).join('');
+  if(cur==="mine"&&!user)cur="all";
+  $("fdist").value=cur;if($("fdist").value!==cur)$("fdist").value="all";
+}
+function renderItems(){
+  renderOwner();refreshDist();
+  var q=$("q").value.toLowerCase(),fc=$("fc").value,fd=$("fd").value,fp=$("fp").value,fdt=$("fdist").value;
+  var list=items.filter(function(i){
+    if(q&&(i.n+" "+i.ds+" "+(i.oc||"")).toLowerCase().indexOf(q)<0)return false;
+    if(fc!=="all"&&i.c!==fc)return false;
+    if(fd!=="all"&&i.d!==fd)return false;
+    if(fdt==="mine"&&user&&i.dt!==user.dt)return false;
+    if(fdt!=="all"&&fdt!=="mine"&&i.dt!==fdt)return false;
+    if(fp==="free"&&tot(i)!==0)return false;
+    if((fp==="200"||fp==="500")&&tot(i)>=+fp)return false;
+    return true});
+  $("items").innerHTML=list.length?list.map(function(i){
+    return'<article class="card'+(i.done?' done':'')+'"><div class="ph">'+(i.img?'<img src="'+i.img+'" alt="'+esc(i.n)+'">':'<span aria-hidden="true">'+ICON[i.c]+'</span>')+'</div><div class="cb">'+
+    '<h3>'+esc(i.n)+'</h3><div><span class="tag">'+esc(i.oc||i.c)+'</span> <span class="tag">'+esc(i.cd)+'</span></div>'+
+    '<div class="price">'+(tot(i)===0?'Free':'₹'+tot(i))+'</div>'+
+    (fee(i.c,i.cd,i.p)>0?'<div class="meta">'+(i.p===0?'Given free by seller':'₹'+i.p+' to seller')+' + ₹'+fee(i.c,i.cd,i.p)+' PassItOn fee</div>':'')+
+    '<div class="meta">'+esc(i.y)+', '+esc(i.dp)+' · for '+esc(i.d)+'</div>'+
+    '<div class="meta">📍 '+esc(i.col)+', '+esc(i.dt)+'</div>'+
+    '<div class="meta">'+esc(i.ds)+'</div>'+
+    (i.show&&isB()?'<div class="contact"><label for="bp'+i.id+'">Your WhatsApp number</label><input id="bp'+i.id+'" maxlength="15" inputmode="tel" placeholder="10-digit number"><button class="btn sm" style="margin-top:8px" data-a="q" data-id="'+i.id+'">Send request</button><div class="meta" style="margin-top:6px">The seller is messaged on WhatsApp. Numbers stay hidden until you pay and confirm.</div></div>':'')+
+    '<div class="row">'+(i.done?'<span class="tag">Sold / Given</span>':isB()?'<button class="btn sm" data-a="c" data-id="'+i.id+'">'+(i.show?'Cancel':'Request to buy')+'</button>':'')+
+    (canManage(i)?'<button class="btn sm alt" data-a="d" data-id="'+i.id+'">'+(i.done?'Relist':'Mark sold / given')+'</button>':'')+'</div></div></article>'}).join('')
+  :'<div class="empty" style="grid-column:1/-1">'+(items.length?'No items match. Try different filters.':'No items yet. Tap the + button to add the first one.')+'</div>';
+}
+function renderReqs(){
+  renderOwner();
+  $("reqs").innerHTML=!reqs.length?'<div class="empty">No requests yet.</div>':reqs.map(function(r){
+    return'<div class="req"><p><strong>'+esc(r.t)+'</strong></p><div class="meta">'+esc(r.n)+' · '+esc(r.col)+', '+esc(r.dt)+' · '+esc(r.d)+' · '+r.r+(r.r===1?' senior has':' seniors have')+' responded</div>'+
+    '<div class="row"><button class="btn sm alt" data-a="r" data-id="'+r.id+'">I have this</button></div></div>'}).join('');
+}
+["q","fc","fd","fp","fdist"].forEach(function(i){$(i).addEventListener("input",renderItems)});
+$("items").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  var it=items.filter(function(x){return x.id==b.dataset.id})[0];
+  if(b.dataset.a==="c"&&isB())it.show=!it.show;
+  if(b.dataset.a==="q"&&isB()){
+    var ph=$("bp"+it.id).value.replace(/[\s-]/g,"");
+    if(!/^\+?\d{10,13}$/.test(ph)){toast("Enter a valid 10-digit WhatsApp number.");return}
+    if(orders.some(function(o){return o.iid===it.id&&o.bid===user.id&&o.st!=="declined"})){toast("You already requested this item.");return}
+    orders.unshift({id:nextId++,iid:it.id,iname:it.n,bid:user.id,bn:user.n,bcol:user.col,bdt:user.dt,bph:ph,sid:it.oid,sn:it.sn,col:it.col,dt:it.dt,sph:it.ct,amt:tot(it),fee:fee(it.c,it.cd,it.p),st:"requested"});
+    wa(it.ct,it.sn,"PassItOn: "+user.n+" ("+user.col+") wants to buy '"+it.n+"' for ₹"+tot(it)+". Open PassItOn > My listings to accept or decline.");
+    it.show=false;toast("Request sent to the seller on WhatsApp.");renderDeals();
+  }
+  if(b.dataset.a==="d"){if(!canManage(it))return;it.done=!it.done;it.show=false}
+  renderItems()});
+$("dlist").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  var a=b.dataset.a,id=b.dataset.id;
+  if(a==="d"){var it=items.filter(function(x){return x.id==id})[0];if(it&&canManage(it))it.done=!it.done;renderDeals();renderItems();return}
+  var o=orders.filter(function(x){return x.id==id})[0];if(!o)return;
+  if((a==="acc"||a==="dec")&&o.sid===user.id&&o.st==="requested"){
+    o.st=a==="acc"?"accepted":"declined";
+    wa(o.bph,o.bn,a==="acc"?"PassItOn: "+o.sn+" accepted your request for '"+o.iname+"'. Open PassItOn > My orders to pay ₹"+o.amt+".":"PassItOn: the seller could not accept your request for '"+o.iname+"'.");
+    toast(a==="acc"?"Accepted. The buyer was messaged on WhatsApp.":"Declined. The buyer was messaged.")}
+  else if(a==="pay"&&o.bid===user.id&&o.st==="accepted"){o.st="paid";toast("Payment received (demo). Final confirmation is now open.")}
+  else if(a==="conf"&&o.bid===user.id&&o.st==="paid"){
+    o.st="confirmed";var t=items.filter(function(x){return x.id===o.iid})[0];if(t)t.done=true;
+    wa(o.sph,o.sn,"PassItOn: "+o.bn+" paid ₹"+o.amt+" and confirmed '"+o.iname+"'. Please hand it over on campus.");
+    toast("Confirmed. The seller's contact is now shown.")}
+  renderDeals();renderItems()});
+$("reqs").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b||b.dataset.a!=="r")return;
+  var r=reqs.filter(function(x){return x.id==b.dataset.id})[0];if(!r)return;
+  r.by=r.by||[];if(r.by.indexOf(user.id)>=0){toast("You already responded.");return}
+  r.by.push(user.id);r.r++;
+  wa(r.ph,r.n,"PassItOn: a senior from "+user.col+" has what you asked for ('"+r.t+"'). Watch Browse for the listing.");
+  toast("The student was notified on WhatsApp.");renderReqs()});
+function preview(){
+  var pr=Math.max(0,+$("p").value||0),f=fee($("c").value,$("cd").value,pr);
+  $("pv").textContent=(pr===0?"You give it free.":"You receive ₹"+pr+".")+" "+(f>0?"PassItOn adds a ₹"+f+" fee, so the buyer pays ₹"+(pr+f)+".":"No PassItOn fee on this item, so the buyer pays ₹"+pr+".")}
+["c","cd","p"].forEach(function(i){$(i).addEventListener("input",preview)});
+preview();
+function syncOther(){var o=$("c").value==="Other";$("ow").hidden=!o;$("oc").required=o}
+$("c").addEventListener("input",syncOther);
+function syncDept(){var o=$("d").value==="Other";$("odw").hidden=!o;$("od").required=o;if(!o)$("od").value=""}
+$("d").addEventListener("input",syncDept);
+$("ph").addEventListener("change",function(){var f=this.files[0];if(f&&f.type.indexOf("image/")===0){$("pp").src=URL.createObjectURL(f);$("pp").hidden=false}else $("pp").hidden=true});
+function shrink(file,cb){
+  var r=new FileReader();
+  r.onload=function(){var im=new Image();im.onload=function(){var k=Math.min(1,640/Math.max(im.width,im.height)),cv=document.createElement("canvas");cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);cb(cv.toDataURL("image/jpeg",.7))};im.onerror=function(){cb(null)};im.src=r.result};
+  r.onerror=function(){cb(null)};r.readAsDataURL(file)}
+$("lf").addEventListener("submit",function(e){
+  e.preventDefault();
+  var form=e.target,f=$("ph").files[0];
+  if(!f||f.type.indexOf("image/")!==0){$("lm").textContent="Add a photo of the item (JPG or PNG).";return}
+  shrink(f,function(img){
+    if(!img){$("lm").textContent="That photo could not be read. Try a different image.";return}
+    var oth=$("c").value==="Other";
+    var dep=$("d").value==="Other"?($("od").value.trim()||"Other"):$("d").value;
+    items.unshift({id:nextId++,n:$("n").value.trim(),c:$("c").value,oc:oth?$("oc").value.trim():"",d:dep,cd:$("cd").value,p:Math.max(0,+$("p").value||0),y:$("y").value,dp:dep==="All first-year"?"Your dept":dep,sn:user.n,oid:user.id,col:user.col,dt:user.dt,cm:$("cm").value,ct:$("ct").value.trim(),ds:$("ds").value.trim()||"No description.",img:img,done:false});
+    form.reset();$("p").value=0;$("pp").hidden=true;syncOther();syncDept();preview();
+    $("lm").textContent="Listing saved. Find it at the top of Browse items.";
+    renderItems();setTimeout(function(){$("lm").textContent=""},4000)})});
+$("rf").addEventListener("submit",function(e){
+  e.preventDefault();
+  var ph=$("rp").value.replace(/[\s-]/g,"");
+  if(!/^\+?\d{10,13}$/.test(ph)){toast("Enter a valid 10-digit WhatsApp number.");return}
+  reqs.unshift({id:nextId++,t:$("rt").value.trim(),n:user.n,col:user.col,dt:user.dt,d:$("rd").value,ph:ph,r:0});
+  e.target.reset();$("rm").textContent="Request posted. Sellers will reach you on WhatsApp.";renderReqs();setTimeout(function(){$("rm").textContent=""},4000)});
+
+$("lif").addEventListener("submit",function(e){
+  e.preventDefault();
+  var col=cleanC($("lc").value),nm=cleanC($("ln").value);
+  if(!nm){$("lim").textContent="Enter your name.";return}
+  if(!$("ldt").value){$("lim").textContent="Pick a district from the list.";return}
+  var u={n:nm,col:col,dt:$("ldt").value,role:$("lr").value};
+  u.id=uid(u);
+  user=u;owner=false;
+  logins.unshift({n:u.n,role:u.role,col:u.col,dt:u.dt,t:new Date().toLocaleString()});
+  try{localStorage.setItem("pi_user",JSON.stringify(u))}catch(x){}
+  $("lif").reset();$("lim").textContent="";
+  showUser();renderItems();renderReqs();window.scrollTo(0,0)});
+$("plus").addEventListener("click",function(){setTimeout(function(){$("n").focus()},500)});
+$("ownt").addEventListener("click",function(){showForm("ownf")});
+$("ownb").addEventListener("click",function(){showForm("lif");$("om").textContent=""});
+$("ownf").addEventListener("submit",function(e){
+  e.preventDefault();
+  if(!window.crypto||!crypto.subtle){$("om").textContent="Owner login needs a secure (https) page.";return}
+  sha($("ou").value.trim().toLowerCase()+":"+$("op").value).then(function(h){
+    if(h===OWNER_HASH){owner=true;user={n:"Owner (parmita)",role:"Owner",col:"PassItOn",dt:"-",id:"owner"};$("ownf").reset();$("om").textContent="";showForm("lif");showUser();renderItems();renderReqs();window.scrollTo(0,0)}
+    else $("om").textContent="Username or password is incorrect."})});
+$("out").addEventListener("click",function(){
+  owner=false;user=null;try{localStorage.removeItem("pi_user")}catch(x){}
+  showForm("lif");showUser();renderItems()});
+try{user=JSON.parse(localStorage.getItem("pi_user"))}catch(x){user=null}
+if(!user||!user.n||!user.col||!user.dt||!user.role||!user.id||user.id==="owner")user=null;
+showUser();renderItems();renderReqs();
+</script>
+</body>
+</html>
