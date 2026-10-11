@@ -89,7 +89,7 @@ footer strong{color:var(--gd)}
 <h2>Welcome to PassItOn</h2>
 <p class="sub" style="margin:0">Tell us a little about you. Other students will see your college and district on your listings and requests.</p>
 <div><label for="ln">Your name</label><input id="ln" required maxlength="30" autocomplete="name"></div>
-<div><label for="lc">College name</label><input id="lc" required maxlength="70" placeholder="e.g. Government College of Engineering"><div class="meta">Must end with Engineering College, Institute of Technology or University.</div></div>
+<div><label for="lc">College name</label><input id="lc" required maxlength="70" placeholder="Your college name"></div>
 <div><label for="ldt">District</label><select id="ldt" required></select></div>
 <div><label for="lr">I want to</label><select id="lr"><option>Sell materials</option><option>Buy materials</option></select></div>
 <div class="msg" id="lim" role="status" style="color:var(--warn)"></div>
@@ -200,7 +200,6 @@ function fee(c,cd,p){var f=FEE[c];if(typeof f==="object")return f[cd]||10;if(typ
 function tot(i){return i.p+fee(i.c,i.cd,i.p)}
 var user=null,owner=false,logins=[];
 var OWNER_HASH="610567ab48c36a77fe67829f959d31339d3dd7662dbfd01f8c3e90b5df66c5fc";
-var COLLEGE_RE=/^.{3,}\s(engineering college|institute of technology|university)$/i;
 function cleanC(t){return t.trim().replace(/\s+/g," ")}
 function showForm(id){["lif","ownf"].forEach(function(f){$(f).hidden=f!==id})}
 var orders=[],msgs=[];
@@ -359,12 +358,10 @@ $("rf").addEventListener("submit",function(e){
   reqs.unshift({id:nextId++,t:$("rt").value.trim(),n:user.n,col:user.col,dt:user.dt,d:$("rd").value,ph:ph,r:0});
   e.target.reset();$("rm").textContent="Request posted. Sellers will reach you on WhatsApp.";renderReqs();setTimeout(function(){$("rm").textContent=""},4000)});
 
-$("lc").addEventListener("input",function(){$("lc").setCustomValidity(COLLEGE_RE.test(cleanC($("lc").value))?"":"College name must end with Engineering College, Institute of Technology or University.")});
 $("lif").addEventListener("submit",function(e){
   e.preventDefault();
   var col=cleanC($("lc").value),nm=cleanC($("ln").value);
   if(!nm){$("lim").textContent="Enter your name.";return}
-  if(!COLLEGE_RE.test(col)){$("lim").textContent="College name must end with Engineering College, Institute of Technology or University.";return}
   if(!$("ldt").value){$("lim").textContent="Pick a district from the list.";return}
   var u={n:nm,col:col,dt:$("ldt").value,role:$("lr").value};
   u.id=uid(u);
